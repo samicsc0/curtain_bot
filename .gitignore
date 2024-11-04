@@ -26,6 +26,7 @@ Thumbs.db
 # IDEs and editors
 .vscode/
 .idea/
+.VSCodeCounter/
 
 # Prisma
 .src/infrastructure/database/
