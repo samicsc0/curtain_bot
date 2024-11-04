@@ -1,4 +1,4 @@
-import { CurtainCategory } from "../value-objects";
+import { CurtainCategory } from '../value-objects';
 
 class Curtain {
   private curtain_id: string;
@@ -12,7 +12,7 @@ class Curtain {
     curtain_name: string,
     curtain_category: CurtainCategory,
     curtain_image_url: string,
-    curtain_base_price: number
+    curtain_base_price: number,
   ) {
     this.curtain_id = curtain_id;
     this.curtain_name = curtain_name;
