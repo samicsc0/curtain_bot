@@ -1,11 +1,26 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
+}
+model Admin {
+  admin_id         String @id @unique @default(cuid())
+  admin_first_name String
+  admin_last_name  String
+  admin_email      String @unique
+  admin_password   String
+}
+
+model Curtain {
+  curtain_id         String          @id @unique @default(cuid())
+  curtain_name       String
+  curtain_image_url  String
+  curtain_base_price Float
+  curtain_color      String
+  curtain_category   CurtainCategory @default(Flat)
+}
+
+enum CurtainCategory {
+  Flat
+  Patterned
 }
 
 datasource db {
