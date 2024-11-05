@@ -10,8 +10,11 @@ interface CurtainRepository {
     curtain: Partial<Curtain>,
   ): Promise<Curtain>;
   deleteCurtain(curtain_id: string): Promise<boolean>;
-  getAllCurtains(limit:number, page:number, category?: CurtainCategory): Promise<Curtain[]>;
-
+  getAllCurtains(
+    limit: number,
+    page: number,
+    category?: CurtainCategory,
+  ): Promise<Curtain[]>;
 }
 
 export { CurtainRepository };
