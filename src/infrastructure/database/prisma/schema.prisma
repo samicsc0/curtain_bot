@@ -1,12 +1,14 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 model Admin {
-  admin_id         String @id @unique @default(cuid())
+  admin_id         String  @id @unique @default(cuid())
   admin_first_name String
   admin_last_name  String
-  admin_email      String @unique
+  admin_email      String  @unique
   admin_password   String
+  is_active        Boolean @default(true)
 }
 
 model Curtain {
@@ -16,6 +18,7 @@ model Curtain {
   curtain_base_price Float
   curtain_color      String
   curtain_category   CurtainCategory @default(Flat)
+  is_active          Boolean         @default(true)
 }
 
 enum CurtainCategory {
