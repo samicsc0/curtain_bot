@@ -13,14 +13,15 @@ model Admin {
 }
 
 model Curtain {
-  curtain_id         String          @id @unique @default(cuid())
-  curtain_name       String
-  curtain_image_url  String
-  curtain_base_price Float
-  curtain_color      String
-  curtain_category   CurtainCategory @default(Flat)
-  is_deleted         Boolean         @default(false)
-  is_active          Boolean         @default(true)
+  curtain_id          String          @id @unique @default(cuid())
+  curtain_name        String
+  curtain_image_url   String
+  curtain_base_price  Float
+  curtain_color       String
+  curtain_description String
+  curtain_category    CurtainCategory @default(Flat)
+  is_deleted          Boolean         @default(false)
+  is_active           Boolean         @default(true)
 }
 
 enum CurtainCategory {

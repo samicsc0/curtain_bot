@@ -1,2 +1,3 @@
-import AdminRepository from './AdminRepository';
-export { AdminRepository };
+import AdminRepository from "./AdminRepository";
+import CurtainRepository from "./CurtainRepository";
+export { AdminRepository, CurtainRepository };

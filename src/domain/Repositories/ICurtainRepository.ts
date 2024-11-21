@@ -1,20 +1,23 @@
-import { CreateCurtainDTO } from '../DTOs';
-import { Curtain } from '../entities';
-import { CurtainCategory } from '../value-objects';
+import { CreateCurtainDTO } from "../DTOs";
+import { CurtainDto, UpdateCurtainDTO } from "../DTOs/CurtainDTO";
+import { CurtainCategory } from "../value-objects";
 
 interface ICurtainRepository {
-  createCurtain(curtain: CreateCurtainDTO): Promise<Curtain>;
-  getCurtainById(curtain_id: string): Promise<Curtain>;
+  createCurtain(curtain: CreateCurtainDTO): Promise<CurtainDto>;
+  getCurtainById(curtain_id: string): Promise<CurtainDto>;
   updateCurtain(
     curtain_id: string,
-    curtain: Partial<Curtain>,
-  ): Promise<Curtain>;
+    curtain: UpdateCurtainDTO
+  ): Promise<CurtainDto>;
+  updateCurtainStatus(
+    curtain_id: string,
+    is_active: boolean
+  ): Promise<CurtainDto>;
   deleteCurtain(curtain_id: string): Promise<boolean>;
   getAllCurtains(
-    limit: number,
     page: number,
-    category?: CurtainCategory,
-  ): Promise<Curtain[]>;
+    category?: CurtainCategory
+  ): Promise<CurtainDto[]>;
 }
 
 export { ICurtainRepository };
