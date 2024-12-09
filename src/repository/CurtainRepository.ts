@@ -4,8 +4,21 @@ import { ICurtainRepository } from "../domain/Repositories";
 import { CurtainDto, UpdateCurtainDTO } from "../domain/DTOs/CurtainDTO";
 import { CurtainCategory } from "../domain/value-objects";
 
+/**
+ *
+ *
+ * @class CurtainRepository
+ * @implements {ICurtainRepository}
+ */
 class CurtainRepository implements ICurtainRepository {
   constructor(private prisma: PrismaClient) {}
+  /**
+   *
+   *
+   * @param {CreateCurtainDTO} curtain
+   * @return {*}  {Promise<CurtainDto>}
+   * @memberof CurtainRepository
+   */
   async createCurtain(curtain: CreateCurtainDTO): Promise<CurtainDto> {
     try {
       const createdCurtain = await this.prisma.curtain.create({
@@ -26,6 +39,13 @@ class CurtainRepository implements ICurtainRepository {
       throw new Error(e as string);
     }
   }
+  /**
+   *
+   *
+   * @param {string} curtain_id
+   * @return {*}  {Promise<CurtainDto>}
+   * @memberof CurtainRepository
+   */
   async getCurtainById(curtain_id: string): Promise<CurtainDto> {
     try {
       const curtain = await this.prisma.curtain.findUnique({
@@ -50,6 +70,14 @@ class CurtainRepository implements ICurtainRepository {
       throw new Error(e as string);
     }
   }
+  /**
+   *
+   *
+   * @param {string} curtain_id
+   * @param {UpdateCurtainDTO} curtain
+   * @return {*}  {Promise<CurtainDto>}
+   * @memberof CurtainRepository
+   */
   async updateCurtain(
     curtain_id: string,
     curtain: UpdateCurtainDTO
@@ -87,6 +115,14 @@ class CurtainRepository implements ICurtainRepository {
       throw new Error(error as string);
     }
   }
+  /**
+   *
+   *
+   * @param {string} curtain_id
+   * @param {boolean} is_active
+   * @return {*}  {Promise<CurtainDto>}
+   * @memberof CurtainRepository
+   */
   async updateCurtainStatus(
     curtain_id: string,
     is_active: boolean
@@ -118,6 +154,13 @@ class CurtainRepository implements ICurtainRepository {
       throw new Error(e as string);
     }
   }
+  /**
+   *
+   *
+   * @param {string} curtain_id
+   * @return {*}  {Promise<boolean>}
+   * @memberof CurtainRepository
+   */
   async deleteCurtain(curtain_id: string): Promise<boolean> {
     try {
       const curtainExists = await this.prisma.curtain.findUnique({
@@ -136,6 +179,14 @@ class CurtainRepository implements ICurtainRepository {
       throw new Error(e as string);
     }
   }
+  /**
+   *
+   *
+   * @param {number} page
+   * @param {CurtainCategory} [category]
+   * @return {*}  {Promise<CurtainDto[]>}
+   * @memberof CurtainRepository
+   */
   async getAllCurtains(
     page: number,
     category?: CurtainCategory

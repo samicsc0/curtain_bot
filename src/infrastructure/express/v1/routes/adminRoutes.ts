@@ -6,10 +6,12 @@ import {
   updateAdminEmail,
   updateAdminPassword,
   AdminStatus,
+  authenticateAdmin
 } from '../controllers/AdminController';
 
 const adminRouter = Router();
 
+adminRouter.post('/auth',authenticateAdmin);
 adminRouter.post('/', createAdmin);
 adminRouter.get('/', getAllAdmins);
 adminRouter.get('/:id', getAdminById);

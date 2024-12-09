@@ -10,6 +10,7 @@ import {
   UpdateAdminPasswordUseCase,
   UpdateAdminStatus,
 } from "../../../../usecase/Admin";
+import { AuthenticationAuthorizationServices } from "../../services";
 
 // DEPENDENCIES
 const prisma = new PrismaClient();
@@ -24,10 +25,36 @@ const updateAdminPasswordUseCase = new UpdateAdminPasswordUseCase(
   adminRepository
 );
 const updateAdminStatusUseCase = new UpdateAdminStatus(adminRepository);
+const authService = new AuthenticationAuthorizationServices(adminRepository);
+
+const authenticateAdmin = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    if (email && password) {
+      const authResult = await authService.authenticate({ email, password });
+      if (!authResult) {
+        res.status(401).json({ message: "Invalid credentials" });
+      } else {
+        res.status(200).json(authResult);
+      }
+    }else{
+      throw new Error('Invalid request');
+    }
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
 
 const createAdmin = async (req: Request, res: Response) => {
   try {
-    const adminCreateDto: AdminCreateDTO = req.body;
+    const {admin_first_name,admin_last_name,admin_email,admin_password} = req.body;
+    const hashedPassword = await authService.encryptPassword(admin_password);
+    const adminCreateDto: AdminCreateDTO = {
+      admin_email:admin_email,
+      admin_first_name:admin_first_name,
+      admin_last_name:admin_last_name,
+      admin_password:hashedPassword,
+    };
     const result = await createAdminUseCase.execute(adminCreateDto);
     res.status(201).json(result);
   } catch (error) {
@@ -104,4 +131,5 @@ export {
   updateAdminEmail,
   updateAdminPassword,
   AdminStatus,
+  authenticateAdmin,
 };
