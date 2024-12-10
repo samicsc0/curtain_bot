@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { AdminCreateDTO, AdminDTO } from "../domain/DTOs";
 import { IAdminRepository } from "../domain/Repositories";
+import { AuthenticationAuthorizationServices } from "../infrastructure/express/services";
 
 /**
  *
@@ -19,14 +20,20 @@ class AdminRepository implements IAdminRepository {
    */
   async createAdmin(admin: AdminCreateDTO): Promise<AdminDTO> {
     try {
-      const curtain = await this.prisma.admin.create({ data: admin });
-      const adminDto: AdminDTO = {
-        admin_id: curtain.admin_id,
-        admin_email: curtain.admin_email,
-        admin_first_name: curtain.admin_first_name,
-        admin_last_name: curtain.admin_last_name,
-      };
-      return adminDto;
+      // CHECK IF AN ADMIN ALREADY EXISTS
+      const adminCounter = await this.prisma.admin.count();
+      if (adminCounter === 0) {
+        const createdAdmin = await this.prisma.admin.create({ data: admin });
+        const adminDto: AdminDTO = {
+          admin_id: createdAdmin.admin_id,
+          admin_email: createdAdmin.admin_email,
+          admin_first_name: createdAdmin.admin_first_name,
+          admin_last_name: createdAdmin.admin_last_name,
+        };
+        return adminDto;
+      } else {
+        throw new Error("Admin already exist");
+      }
     } catch (e) {
       throw new Error(e as string);
     }
@@ -64,7 +71,10 @@ class AdminRepository implements IAdminRepository {
    * @return {*}  {Promise<boolean>}
    * @memberof AdminRepository
    */
-  async updateAdminEmail(admin_id: string, email: string): Promise<boolean> {
+  async updateAdminEmail(
+    admin_id: string,
+    email: string
+  ): Promise<AdminDTO | null> {
     try {
       const admin = await this.prisma.admin.findUnique({
         where: { admin_id: admin_id },
@@ -72,11 +82,17 @@ class AdminRepository implements IAdminRepository {
       if (admin === null) {
         throw new Error("Admin not found");
       } else {
-        await this.prisma.admin.update({
+        const updatedAdmin = await this.prisma.admin.update({
           where: { admin_id },
           data: { admin_email: email },
         });
-        return true;
+        const formatedAdmin: AdminDTO = {
+          admin_id: updatedAdmin.admin_id,
+          admin_first_name: updatedAdmin.admin_first_name,
+          admin_last_name: updatedAdmin.admin_last_name,
+          admin_email: updatedAdmin.admin_email,
+        };
+        return formatedAdmin;
       }
     } catch (error) {
       throw new Error(error as string);
@@ -86,26 +102,32 @@ class AdminRepository implements IAdminRepository {
    *
    *
    * @param {string} admin_id
-   * @param {string} password
+   * @param {string} old_admin_password
+   * @param {string} new_admin_password
    * @return {*}  {Promise<boolean>}
    * @memberof AdminRepository
    */
   async updateAdminPassword(
     admin_id: string,
-    password: string
+    old_admin_password: string,
+    new_admin_password: string
   ): Promise<boolean> {
     try {
       const admin = await this.prisma.admin.findUnique({
         where: { admin_id: admin_id },
       });
-      if (admin === null) {
+      if (admin == null) {
         throw new Error("Admin not found");
       } else {
-        await this.prisma.admin.update({
-          where: { admin_id },
-          data: { admin_password: password },
-        });
-        return true;
+        if (await AuthenticationAuthorizationServices.comparePassword(old_admin_password,admin.admin_password)) {
+          await this.prisma.admin.update({
+            where: { admin_id },
+            data: { admin_password: new_admin_password },
+          });
+          return true;
+        } else {
+          throw new Error("Old password is incorrect");
+        }
       }
     } catch (error) {
       throw new Error(error as string);
@@ -149,7 +171,12 @@ class AdminRepository implements IAdminRepository {
   async getAllAdmins(): Promise<AdminDTO[]> {
     try {
       const admins = await this.prisma.admin.findMany();
-      const adminDto: AdminDTO[] = admins;
+      const adminDto: AdminDTO[] = admins.map((admin) => ({
+        admin_id: admin.admin_id,
+        admin_first_name: admin.admin_first_name,
+        admin_last_name: admin.admin_last_name,
+        admin_email: admin.admin_email,
+      }));
       return adminDto;
     } catch (e) {
       throw new Error(e as string);

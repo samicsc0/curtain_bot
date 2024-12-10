@@ -72,9 +72,18 @@ const createAdmin = async (req: Request, res: Response) => {
       admin_password: hashedPassword,
     };
     const result = await createAdminUseCase.execute(adminCreateDto);
-    res.status(201).json(result);
+    const response: ApiResponseDTO<AdminDTO> = {
+      statusCode: 201,
+      message: "Admin Created Successfully.",
+      data: result,
+    };
+    res.status(201).json(response);
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    const response: ApiErrorResponseDTO = {
+      errorCode: 500,
+      errorMessage: (error as Error).message,
+    };
+    res.status(500).json(response);
   }
 };
 
@@ -93,36 +102,67 @@ const getAdminById = async (req: Request, res: Response) => {
 const getAllAdmins = async (_req: Request, res: Response) => {
   try {
     const admins = await getAllAdminsUseCase.execute();
-    res.json(admins);
+    const response: ApiResponseDTO<AdminDTO[]> = {
+      statusCode: 200,
+      message: "Admins Retrieved Successfully.",
+      data: admins,
+    };
+    res.json(response);
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    const response: ApiErrorResponseDTO = {
+      errorCode: 500,
+      errorMessage: (error as Error).message,
+    };
+    res.status(500).json(response);
   }
 };
 
 const updateAdminEmail = async (req: Request, res: Response) => {
   try {
-    const { email } = req.body;
-    const success = await updateAdminEmailUseCase.execute(req.params.id, email);
+    const { admin_email } = req.body;
+    const success = await updateAdminEmailUseCase.execute(
+      req.params.id,
+      admin_email
+    );
     if (success) {
-      res.json({ message: "Email updated successfully" });
+      const response: ApiResponseDTO<AdminDTO> = {
+        statusCode: 200,
+        message: "Email updated successfully.",
+        data: success,
+      };
+      res.json(response);
     }
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    const response: ApiErrorResponseDTO = {
+      errorCode: 500,
+      errorMessage: (error as Error).message,
+    };
+    res.status(500).json(response);
   }
 };
 
 const updateAdminPassword = async (req: Request, res: Response) => {
   try {
-    const { password } = req.body;
+    const { old_admin_password, new_admin_password } = req.body;
     const success = await updateAdminPasswordUseCase.execute(
       req.params.id,
-      password
+      old_admin_password,
+      await authService.encryptPassword(new_admin_password)
     );
     if (success) {
-      res.json({ message: "Password updated successfully" });
+      const response: ApiResponseDTO<string> = {
+        statusCode: 204,
+        message: "Password updated successfully.",
+        data: "",
+      };
+      res.status(204).json(response);
     }
   } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    const response: ApiErrorResponseDTO = {
+      errorCode: 500,
+      errorMessage: (error as Error).message,
+    };
+    res.status(500).json(response);
   }
 };
 

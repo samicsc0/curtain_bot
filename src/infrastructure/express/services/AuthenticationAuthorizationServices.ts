@@ -35,7 +35,7 @@ class AuthenticationAuthorizationServices implements IAuthService {
    * @return {*}  {Promise<boolean>}
    * @memberof AuthenticationAuthorizationServices
    */
-  async comparePassword(
+  static async comparePassword(
     password: string,
     hashedPassword: string
   ): Promise<boolean> {
@@ -68,8 +68,10 @@ class AuthenticationAuthorizationServices implements IAuthService {
       );
       if (
         typeof adminPassword === "string" &&
-        (await this.comparePassword(credentials.password, adminPassword)) ===
-          true
+        (await AuthenticationAuthorizationServices.comparePassword(
+          credentials.password,
+          adminPassword
+        )) === true
       ) {
         return findByEmail;
       } else {

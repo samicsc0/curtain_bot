@@ -1,4 +1,4 @@
-import { IAdminRepository } from '../../domain/Repositories';
+import { IAdminRepository } from "../../domain/Repositories";
 
 export default class UpdateAdminPasswordUseCase {
   constructor(private _adminRepository: IAdminRepository) {}
@@ -6,11 +6,20 @@ export default class UpdateAdminPasswordUseCase {
    *
    *
    * @param {string} adminId
-   * @param {string} adminPassword
-   * @return {*} 
+   * @param {string} old_admin_password
+   * @param {string} new_admin_password
+   * @return {*}
    * @memberof UpdateAdminPasswordUseCase
    */
-  async execute(adminId: string, adminPassword: string) {
-    return this._adminRepository.updateAdminPassword(adminId, adminPassword);
+  async execute(
+    adminId: string,
+    old_admin_password: string,
+    new_admin_password: string
+  ) {
+    return this._adminRepository.updateAdminPassword(
+      adminId,
+      old_admin_password,
+      new_admin_password
+    );
   }
 }

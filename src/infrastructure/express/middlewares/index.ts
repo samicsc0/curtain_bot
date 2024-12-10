@@ -1,2 +1,3 @@
-import authorization from "./AuthorizationMiddleware";
-export { authorization };
+import AuthorizationMiddleware from "./AuthorizationMiddleware";
+import RequestValidationMiddleware from "./RequestValidationMiddleware";
+export { AuthorizationMiddleware, RequestValidationMiddleware };
