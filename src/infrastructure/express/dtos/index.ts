@@ -1,3 +1,4 @@
 import ApiErrorResponseDTO from "./ApiErrorResponseDTO";
 import ApiResponseDTO from "./ApiResponseDTO";
-export { ApiErrorResponseDTO, ApiResponseDTO };
+import AuthenticationDTO from "./AuthenticationDTO";
+export { ApiErrorResponseDTO, ApiResponseDTO, AuthenticationDTO };

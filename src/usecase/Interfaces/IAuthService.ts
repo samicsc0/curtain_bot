@@ -5,7 +5,6 @@ interface IAuthService {
     email: string;
     password: string;
   }): Promise<AdminDTO | null>;
-  validateToken(token: string): AdminDTO | null;
   generateToken(adminDto: AdminDTO): string;
   encryptPassword(password: string): Promise<string>;
   comparePassword(password: string, hashedPassword: string): Promise<boolean>;

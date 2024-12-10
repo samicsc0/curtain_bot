@@ -86,7 +86,7 @@ class AuthenticationAuthorizationServices implements IAuthService {
    * @return {*}  {(AdminDTO | null)}
    * @memberof AuthenticationAuthorizationServices
    */
-  validateToken(token: string): AdminDTO | null {
+  static validateToken(token: string): AdminDTO | null {
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
       if (decoded) {

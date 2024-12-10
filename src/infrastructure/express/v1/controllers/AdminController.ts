@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { AdminRepository } from "../../../../repository";
 import { Request, Response } from "express";
-import { AdminCreateDTO } from "../../../../domain/DTOs";
+import { AdminCreateDTO, AdminDTO } from "../../../../domain/DTOs";
 import {
   CreateAdminUseCase,
   GetAdminByIdUseCase,
@@ -11,6 +11,11 @@ import {
   UpdateAdminStatus,
 } from "../../../../usecase/Admin";
 import { AuthenticationAuthorizationServices } from "../../services";
+import {
+  ApiErrorResponseDTO,
+  ApiResponseDTO,
+  AuthenticationDTO,
+} from "../../dtos";
 
 // DEPENDENCIES
 const prisma = new PrismaClient();
@@ -33,12 +38,22 @@ const authenticateAdmin = async (req: Request, res: Response) => {
     if (email && password) {
       const authResult = await authService.authenticate({ email, password });
       if (!authResult) {
-        res.status(401).json({ message: "Invalid credentials" });
+        const response: ApiErrorResponseDTO = {
+          errorCode: 401,
+          errorMessage: "Invalid Credentials.",
+        };
+        res.status(401).json(response);
       } else {
-        res.status(200).json(authResult);
+        const token = authService.generateToken(authResult);
+        const response: ApiResponseDTO<AuthenticationDTO> = {
+          statusCode: 200,
+          message: "Authenticated Successfully.",
+          data: { userInfo: authResult, token: token },
+        };
+        res.status(200).json(response);
       }
-    }else{
-      throw new Error('Invalid request');
+    } else {
+      throw new Error("Invalid request");
     }
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
@@ -47,13 +62,14 @@ const authenticateAdmin = async (req: Request, res: Response) => {
 
 const createAdmin = async (req: Request, res: Response) => {
   try {
-    const {admin_first_name,admin_last_name,admin_email,admin_password} = req.body;
+    const { admin_first_name, admin_last_name, admin_email, admin_password } =
+      req.body;
     const hashedPassword = await authService.encryptPassword(admin_password);
     const adminCreateDto: AdminCreateDTO = {
-      admin_email:admin_email,
-      admin_first_name:admin_first_name,
-      admin_last_name:admin_last_name,
-      admin_password:hashedPassword,
+      admin_email: admin_email,
+      admin_first_name: admin_first_name,
+      admin_last_name: admin_last_name,
+      admin_password: hashedPassword,
     };
     const result = await createAdminUseCase.execute(adminCreateDto);
     res.status(201).json(result);
