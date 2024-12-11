@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { AdminCreateDTO, AdminDTO } from "../domain/DTOs";
 import { IAdminRepository } from "../domain/Repositories";
 import { AuthenticationAuthorizationServices } from "../infrastructure/express/services";
+import { CustomError } from "../infrastructure/express/utils";
 
 /**
  *
@@ -32,10 +33,10 @@ class AdminRepository implements IAdminRepository {
         };
         return adminDto;
       } else {
-        throw new Error("Admin already exist");
+        throw new CustomError("Admin already exist");
       }
     } catch (e) {
-      throw new Error(e as string);
+      throw new CustomError((e as CustomError).message);
     }
   }
   /**
@@ -80,7 +81,8 @@ class AdminRepository implements IAdminRepository {
         where: { admin_id: admin_id },
       });
       if (admin === null) {
-        throw new Error("Admin not found");
+        const customError = new CustomError("Admin not found", 404);
+        throw customError;
       } else {
         const updatedAdmin = await this.prisma.admin.update({
           where: { admin_id },
@@ -95,7 +97,7 @@ class AdminRepository implements IAdminRepository {
         return formatedAdmin;
       }
     } catch (error) {
-      throw new Error(error as string);
+      throw error;
     }
   }
   /**
@@ -117,20 +119,27 @@ class AdminRepository implements IAdminRepository {
         where: { admin_id: admin_id },
       });
       if (admin == null) {
-        throw new Error("Admin not found");
+        const customError = new CustomError("Admin not found", 404);
+        throw customError;
       } else {
-        if (await AuthenticationAuthorizationServices.comparePassword(old_admin_password,admin.admin_password)) {
+        if (
+          await AuthenticationAuthorizationServices.comparePassword(
+            old_admin_password,
+            admin.admin_password
+          )
+        ) {
           await this.prisma.admin.update({
             where: { admin_id },
             data: { admin_password: new_admin_password },
           });
           return true;
         } else {
-          throw new Error("Old password is incorrect");
+          const customError = new CustomError("Old password is incorrect", 400);
+          throw customError;
         }
       }
     } catch (error) {
-      throw new Error(error as string);
+      throw error;
     }
   }
   /**

@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { z, ZodSchema } from "zod";
-import { ApiErrorResponseDTO } from "../dtos";
+import { CustomError } from "../utils";
 
 export default function RequestValidationMiddleware(schema: ZodSchema) {
   return function requestValidation(
     req: Request,
-    res: Response,
+    _res: Response,
     next: NextFunction
   ) {
     try {
@@ -13,17 +13,16 @@ export default function RequestValidationMiddleware(schema: ZodSchema) {
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const response: ApiErrorResponseDTO = {
-          errorCode: 400,
-          errorMessage: error.errors
-            .map((e) => {
-              return JSON.stringify({ field: e.path, message: e.message });
-            })
-            .join("."),
-        };
-        res.status(400).json(response);
+        const errorMessage = error.errors
+          .map((e) => {
+            return JSON.stringify({ field: e.path, message: e.message });
+          })
+          .join(".");
+        const customError = new CustomError(errorMessage, 400);
+        throw customError;
       } else {
-        next(error);
+        const customError = new CustomError((error as Error).message, 500);
+        next(customError);
       }
     }
   };

@@ -7,9 +7,10 @@ import { IAuthService } from "../../../usecase/Interfaces";
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { IAdminRepository } from "../../../domain/Repositories";
+import envConfig from "../../../shared/env";
 require("dotenv").config();
 
-const JWT_SECRET = process.env.JWT_SECRET as jwt.Secret;
+const JWT_SECRET = envConfig.JWT_SECRET as jwt.Secret;
 
 class AuthenticationAuthorizationServices implements IAuthService {
   constructor(private _adminRepository: IAdminRepository) {

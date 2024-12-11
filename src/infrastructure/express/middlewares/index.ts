@@ -1,3 +1,8 @@
 import AuthorizationMiddleware from "./AuthorizationMiddleware";
 import RequestValidationMiddleware from "./RequestValidationMiddleware";
-export { AuthorizationMiddleware, RequestValidationMiddleware };
+import GlobalErrorHandlerMiddleware from "./GlobalErrorHandlerMiddleware";
+export {
+  AuthorizationMiddleware,
+  RequestValidationMiddleware,
+  GlobalErrorHandlerMiddleware,
+};
