@@ -4,6 +4,7 @@ import GetAllCurtainsUseCase from "./GetAllCurtainsUseCase";
 import GetCurtainByIdUseCase from "./GetCurtainByIdUseCase";
 import UpdateCurtainStatusUseCase from "./UpdateCurtainStatusUseCase";
 import UpdateCurtainUseCase from "./UpdateCurtainUseCase";
+import UpdateCurtainImageUseCase from "./UpdateCurtainImageUseCase";
 export {
   CreateCurtainUseCase,
   DeleteCurtainUseCase,
@@ -11,4 +12,5 @@ export {
   GetCurtainByIdUseCase,
   UpdateCurtainStatusUseCase,
   UpdateCurtainUseCase,
+  UpdateCurtainImageUseCase,
 };

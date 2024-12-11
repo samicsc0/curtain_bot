@@ -3,6 +3,7 @@ import { CreateCurtainDTO } from "../domain/DTOs";
 import { ICurtainRepository } from "../domain/Repositories";
 import { CurtainDto, UpdateCurtainDTO } from "../domain/DTOs/CurtainDTO";
 import { CurtainCategory } from "../domain/value-objects";
+import { CustomError } from "../infrastructure/express/utils";
 
 /**
  *
@@ -12,6 +13,7 @@ import { CurtainCategory } from "../domain/value-objects";
  */
 class CurtainRepository implements ICurtainRepository {
   constructor(private prisma: PrismaClient) {}
+
   /**
    *
    *
@@ -49,7 +51,7 @@ class CurtainRepository implements ICurtainRepository {
   async getCurtainById(curtain_id: string): Promise<CurtainDto> {
     try {
       const curtain = await this.prisma.curtain.findUnique({
-        where: { curtain_id },
+        where: { curtain_id: curtain_id, is_deleted: false },
       });
       if (curtain) {
         const curtainDto: CurtainDto = {
@@ -64,10 +66,11 @@ class CurtainRepository implements ICurtainRepository {
         };
         return curtainDto;
       } else {
-        throw new Error("Curtain not found");
+        const customError = new CustomError("Curtain not found", 404);
+        throw customError;
       }
-    } catch (e) {
-      throw new Error(e as string);
+    } catch (error) {
+      throw error;
     }
   }
   /**
@@ -109,10 +112,11 @@ class CurtainRepository implements ICurtainRepository {
         };
         return curtainDto;
       } else {
-        throw new Error("Curtain not found");
+        const customError = new CustomError("Curtain not found", 404);
+        throw customError;
       }
     } catch (error) {
-      throw new Error(error as string);
+      throw error;
     }
   }
   /**
@@ -148,10 +152,11 @@ class CurtainRepository implements ICurtainRepository {
         };
         return curtainDto;
       } else {
-        throw new Error("Curtain not found");
+        const customError = new CustomError("Curtain not found", 404);
+        throw customError;
       }
-    } catch (e) {
-      throw new Error(e as string);
+    } catch (error) {
+      throw error;
     }
   }
   /**
@@ -173,10 +178,11 @@ class CurtainRepository implements ICurtainRepository {
         });
         return true;
       } else {
-        throw new Error("Curtain not found");
+        const customError = new CustomError("Curtain not found", 404);
+        throw customError;
       }
-    } catch (e) {
-      throw new Error(e as string);
+    } catch (error) {
+      throw error;
     }
   }
   /**
@@ -188,12 +194,14 @@ class CurtainRepository implements ICurtainRepository {
    * @memberof CurtainRepository
    */
   async getAllCurtains(
-    page: number,
+    page: number = 1,
     category?: CurtainCategory
   ): Promise<CurtainDto[]> {
     try {
-      const currentpage:number = page || 10;
-      const whereCondition = category ? { curtain_category: category } : {};
+      const currentpage: number = page || 10;
+      const whereCondition = category
+        ? { curtain_category: category, is_deleted: false }
+        : { is_deleted: false };
       const curtain = await this.prisma.curtain.findMany({
         where: whereCondition,
         take: 10,
@@ -212,6 +220,46 @@ class CurtainRepository implements ICurtainRepository {
       return curtainDto;
     } catch (e) {
       throw new Error(e as string);
+    }
+  }
+  /**
+   *
+   *
+   * @param {string} curtain_id
+   * @param {string} curtain_image_url
+   * @return {*}  {Promise<CurtainDto>}
+   * @memberof CurtainRepository
+   */
+  async updateCurtainImage(
+    curtain_id: string,
+    curtain_image_url: string
+  ): Promise<CurtainDto> {
+    try {
+      const curtainExists = await this.prisma.curtain.findUnique({
+        where: { curtain_id: curtain_id },
+      });
+      if (curtainExists) {
+        const updatedCurtain = await this.prisma.curtain.update({
+          data: { curtain_image_url: curtain_image_url },
+          where: { curtain_id: curtain_id },
+        });
+        const curtainDto: CurtainDto = {
+          curtain_id: updatedCurtain.curtain_id,
+          curtain_name: updatedCurtain.curtain_name,
+          curtain_base_price: updatedCurtain.curtain_base_price,
+          curtain_color: updatedCurtain.curtain_color,
+          curtain_category: updatedCurtain.curtain_category as CurtainCategory,
+          curtain_image_url: updatedCurtain.curtain_image_url,
+          curtain_description: updatedCurtain.curtain_description,
+          is_active: updatedCurtain.is_active,
+        };
+        return curtainDto;
+      } else {
+        const customError = new CustomError("Curtain not found", 404);
+        throw customError;
+      }
+    } catch (error) {
+      throw error;
     }
   }
 }

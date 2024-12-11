@@ -7,11 +7,17 @@ import {
   DeleteCurtainUseCase,
   GetAllCurtainsUseCase,
   GetCurtainByIdUseCase,
+  UpdateCurtainImageUseCase,
   UpdateCurtainStatusUseCase,
   UpdateCurtainUseCase,
 } from "../../../../usecase/Curtain";
 import { CurtainCategory } from "../../../../domain/value-objects";
-import { UpdateCurtainDTO } from "../../../../domain/DTOs/CurtainDTO";
+import {
+  CurtainDto,
+  UpdateCurtainDTO,
+} from "../../../../domain/DTOs/CurtainDTO";
+import { AsyncErrorHandler } from "../../utils";
+import { ApiResponseDTO } from "../../dtos";
 
 // DEPENDENCIS
 const prisma = new PrismaClient();
@@ -26,71 +32,112 @@ const updateCurtainStatusUseCase = new UpdateCurtainStatusUseCase(
   curtainRepository
 );
 const updateCurtainUseCase = new UpdateCurtainUseCase(curtainRepository);
+const updateCurtainImageUseCase = new UpdateCurtainImageUseCase(
+  curtainRepository
+);
 
-const createCurtain = async(req: Request, res: Response) => {
-  try {
-    const curtainData: CreateCurtainDTO = req.body;
-    const result = await createCurtainUsecase.execute(curtainData);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+const createCurtain = AsyncErrorHandler(async (req: Request, res: Response) => {
+  const curtainData: CreateCurtainDTO = req.body;
+  const result = await createCurtainUsecase.execute(curtainData);
+  const response: ApiResponseDTO<CreateCurtainDTO> = {
+    status: "Success",
+    message: "Curtain created successfully",
+    statusCode: 201,
+    data: result,
+  };
+  res.status(201).json(response);
+});
+const deleteCurtain = AsyncErrorHandler(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  await deleteCurtainUseCase.execute(id);
+  const response:ApiResponseDTO<string> = {
+    status: "Success",
+    message:" Curtain deleted successfully",
+    statusCode:204,
+    data:"",
   }
-};
-const deleteCurtain = (req: Request, res: Response) => {
-  try {
-    const id = req.params.id;
-    const result = deleteCurtainUseCase.execute(id);
-     res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
-  }
-};
-const getAllCurtains = (req: Request, res: Response) => {
-  try {
+  res.status(200).json(response);
+});
+const getAllCurtains = AsyncErrorHandler(
+  async (req: Request, res: Response) => {
     const { page, category } = req.query;
-    const result = getAllCurtainsUseCase.execute(
+    const result = await getAllCurtainsUseCase.execute(
       category as CurtainCategory,
-      parseInt(page as string)
+      page ? parseInt(page as string) : 1
     );
-     res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    const response: ApiResponseDTO<CurtainDto[]> = {
+      status: "Success",
+      statusCode: 200,
+      message: "Curtains retrieved successfully",
+      data: result,
+      totalData: result.length,
+      page: page ? parseInt(page as string) : 1,
+    };
+    res.status(200).json(response);
   }
-};
- const getCurtainById = async (req: Request, res: Response) => {
-   try {
-     const id = req.params.id;
-     const result = await getCurtainByIdUseCase.execute(id);
-     res.status(200).json(result);
-   } catch (error) {
-     res.status(500).json({ error: (error as Error).message });
-   }
- };
-const updateCurtain = (req: Request, res: Response) => {
-  try {
+);
+const getCurtainById = AsyncErrorHandler(
+  async (req: Request, res: Response) => {
     const id = req.params.id;
-    const updateCurtain: UpdateCurtainDTO = req.body;
-    const result = updateCurtainUseCase.execute(id, updateCurtain);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    const result = await getCurtainByIdUseCase.execute(id);
+    const response: ApiResponseDTO<CurtainDto> = {
+      status: "Success",
+      statusCode: 200,
+      message: " Curtain found",
+      data: result,
+    };
+    res.status(200).json(response);
   }
-};
-const updateCurtainStatus = (req: Request, res: Response) => {
-  try {
+);
+const updateCurtain = AsyncErrorHandler(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const updateCurtain: UpdateCurtainDTO = req.body;
+  const result = await updateCurtainUseCase.execute(id, updateCurtain);
+  const response: ApiResponseDTO<CurtainDto> = {
+    status: "Success",
+    statusCode: 200,
+    message: "Curtain updated successfully",
+    data: result,
+  };
+  res.status(200).json(response);
+});
+const updateCurtainStatus = AsyncErrorHandler(
+  async (req: Request, res: Response) => {
     const id = req.params.id;
     const { is_active } = req.body;
-    const result = updateCurtainStatusUseCase.execute(id, is_active);
-     res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
+    const result = await updateCurtainStatusUseCase.execute(id, is_active);
+    const response: ApiResponseDTO<CurtainDto> = {
+      status: "Success",
+      statusCode: 200,
+      message: "Curtain status updated successfully",
+      data: result,
+    };
+    res.status(200).json(response);
   }
-};
+);
+const updateCurtainImage = AsyncErrorHandler(
+  async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const { curtain_image_url } = req.body;
+    const result = await updateCurtainImageUseCase.execute(
+      id,
+      curtain_image_url
+    );
+    const response: ApiResponseDTO<CurtainDto> = {
+      status: "Success",
+      statusCode: 200,
+      message: "Curtain image updated successfully",
+      data: result,
+    };
+    res.status(200).json(response);
+  }
+);
 export {
   createCurtain,
   getCurtainById,
   getAllCurtains,
   updateCurtain,
   updateCurtainStatus,
+  updateCurtainImage,
   deleteCurtain,
 };

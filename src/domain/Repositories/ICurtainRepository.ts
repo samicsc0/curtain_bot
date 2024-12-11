@@ -14,6 +14,10 @@ interface ICurtainRepository {
     is_active: boolean
   ): Promise<CurtainDto>;
   deleteCurtain(curtain_id: string): Promise<boolean>;
+  updateCurtainImage(
+    curtain_id: string,
+    curtain_image_url: string
+  ): Promise<CurtainDto>;
   getAllCurtains(
     page: number,
     category?: CurtainCategory
