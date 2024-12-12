@@ -6,12 +6,9 @@ A Node.js/Express.js backend application built with TypeScript, following Clean 
 - [Key Features](#key-features)
 - [API Endpoints](#api-endpoints)
 - [Development Setup](#development-setup)
-- [Database Schema](#database-schema)
 - [Best Practices](#best-practices)
 - [Environment Configuration](#environment-configuration)
 - [Error Handling](#error-handling)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Architecture
 ### Domain Layer
