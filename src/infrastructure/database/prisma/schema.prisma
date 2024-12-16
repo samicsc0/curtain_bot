@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Admin {
+  admin_id         String  @id @unique @default(cuid())
+  admin_first_name String
+  admin_last_name  String
+  admin_email      String  @unique
+  admin_password   String
+  is_deleted       Boolean @default(false)
+  is_active        Boolean @default(true)
+}
+
+model Curtain {
+  curtain_id          String          @id @unique @default(cuid())
+  curtain_name        String
+  curtain_image_url   String
+  curtain_base_price  Float
+  curtain_color       String
+  curtain_description String
+  curtain_category    CurtainCategory @default(Flat)
+  is_deleted          Boolean         @default(false)
+  is_active           Boolean         @default(true)
+  created_at          DateTime        @default(now())
+}
+
+enum CurtainCategory {
+  Flat
+  Patterned
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
