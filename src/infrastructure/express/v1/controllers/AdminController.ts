@@ -76,10 +76,17 @@ const createAdmin = AsyncErrorHandler(async (req: Request, res: Response) => {
 
 const getAdminById = AsyncErrorHandler(async (req: Request, res: Response) => {
   const admin = await getAdminByIdUseCase.execute(req.params.id);
-  if (!admin) {
+  if (admin) {
+    const response: ApiResponseDTO<AdminDTO> = {
+      status: "Success",
+      statusCode: 200,
+      message: "Admins Retrieved Successfully.",
+      data: admin,
+    };
+    res.json(response);
+  } else {
     res.status(404).json({ error: "Admin not found" });
   }
-  res.json(admin);
 });
 
 const getAllAdmins = AsyncErrorHandler(async (_req: Request, res: Response) => {
