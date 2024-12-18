@@ -82,11 +82,13 @@ telegramBot.on("callback_query", async (ctx) => {
     await ctx.answerCallbackQuery();
     const curtains = await getAll(page, "");
     if (curtains.length) {
-       curtains.map(async (curtainItem) => {
-        await ctx.reply(generateCurtainMessage(curtainItem), {
-          parse_mode: "Markdown",
-        });
-      });
+      await Promise.all(
+        curtains.map(async (curtainItem) => {
+          return ctx.reply(generateCurtainMessage(curtainItem), {
+            parse_mode: "Markdown",
+          });
+        })
+      );
       await ctx.reply("📲 NAVIGATE TO", {
         reply_markup: {
           inline_keyboard: [
@@ -118,11 +120,14 @@ telegramBot.on("callback_query", async (ctx) => {
     await ctx.answerCallbackQuery();
     const curtains = await getAll(page, "Patterned");
     if (curtains.length) {
-      curtains.map(async (curtainItem) => {
-        await ctx.reply(generateCurtainMessage(curtainItem), {
-          parse_mode: "Markdown",
-        });
-      });
+      Promise.all(
+        curtains.map(async (curtainItem) => {
+          return ctx.reply(generateCurtainMessage(curtainItem), {
+            parse_mode: "Markdown",
+          });
+        })
+      );
+
       await ctx.reply("📲 NAVIGATE TO", {
         reply_markup: {
           inline_keyboard: [
@@ -154,11 +159,14 @@ telegramBot.on("callback_query", async (ctx) => {
     await ctx.answerCallbackQuery();
     const curtains = await getAll(page, "Flat");
     if (curtains.length) {
-      curtains.map(async (curtainItem) => {
-        await ctx.reply(generateCurtainMessage(curtainItem), {
-          parse_mode: "Markdown",
-        });
-      });
+      Promise.all(
+        curtains.map(async (curtainItem) => {
+          return ctx.reply(generateCurtainMessage(curtainItem), {
+            parse_mode: "Markdown",
+          });
+        })
+      );
+
       await ctx.reply("📲 NAVIGATE TO", {
         reply_markup: {
           inline_keyboard: [
