@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@prisma/client": "^5.21.1",
+    "@prisma/client": "^5.22.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.7",
     "bcrypt": "^5.1.1",
@@ -41,6 +41,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "postinstall": "node -e 'try { require(\"@prisma/client\") } catch (e) { console.error(\"Prisma Client is not generated.\"); }'",
     "prod": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "prepare": "husky",
