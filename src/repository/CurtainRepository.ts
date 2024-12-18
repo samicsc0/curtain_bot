@@ -206,16 +206,27 @@ class CurtainRepository implements ICurtainRepository {
         skip: (currentpage - 1) * 3,
       });
 
-      const curtainDto = curtain.map((curtain) => ({
-        curtain_id: curtain.curtain_id,
-        curtain_name: curtain.curtain_name,
-        curtain_base_price: curtain.curtain_base_price,
-        curtain_color: curtain.curtain_color,
-        curtain_category: curtain.curtain_category as CurtainCategory,
-        curtain_image_url: curtain.curtain_image_url,
-        curtain_description: curtain.curtain_description,
-        is_active: curtain.is_active,
-      }));
+      const curtainDto = curtain.map(
+        (curtain: {
+          curtain_id: string;
+          curtain_name: string;
+          curtain_base_price: number;
+          curtain_color: string;
+          curtain_category: string;
+          curtain_image_url: string;
+          curtain_description: string;
+          is_active: boolean;
+        }) => ({
+          curtain_id: curtain.curtain_id,
+          curtain_name: curtain.curtain_name,
+          curtain_base_price: curtain.curtain_base_price,
+          curtain_color: curtain.curtain_color,
+          curtain_category: curtain.curtain_category as CurtainCategory,
+          curtain_image_url: curtain.curtain_image_url,
+          curtain_description: curtain.curtain_description,
+          is_active: curtain.is_active,
+        })
+      );
       return curtainDto;
     } catch (e) {
       throw new Error(e as string);
