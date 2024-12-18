@@ -10,7 +10,6 @@
     "express": "^4.21.1",
     "grammy": "^1.33.0",
     "jsonwebtoken": "^9.0.2",
-    "prisma": "^5.21.1",
     "trunk": "^1.1.0",
     "zod": "^3.24.0"
   },
@@ -29,6 +28,7 @@
     "lint-staged": "^15.2.10",
     "nodemon": "^3.1.7",
     "prettier": "3.3.3",
+    "prisma": "^6.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.15.0"
@@ -40,8 +40,9 @@
     ]
   },
   "scripts": {
-    "build": "tsc",
-    "postinstall": "node -e 'try { require(\"@prisma/client\") } catch (e) { console.error(\"Prisma Client is not generated.\"); }'",
+    "build": "npx prisma generate --schema=src/infrastructure/database/prisma/schema.prisma && tsc -b",
+    "postinstall": "npx prisma generate --schema=src/infrastructure/database/prisma/schema.prisma",
+    "migrate": "npx prisma migrate deploy --schema=src/infrastructure/database/prisma/schema.prisma",
     "prod": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "prepare": "husky",
