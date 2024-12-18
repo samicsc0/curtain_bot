@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Admin, PrismaClient } from "@prisma/client";
 import { AdminCreateDTO, AdminDTO } from "../domain/DTOs";
 import { IAdminRepository } from "../domain/Repositories";
 import { AuthenticationAuthorizationServices } from "../infrastructure/express/services";
@@ -217,7 +217,7 @@ class AdminRepository implements IAdminRepository {
         .findUnique({
           where: { admin_email: admin_email },
         })
-        .then((result) => result?.admin_password);
+        .then((result: Admin | null) => result?.admin_password);
     } catch (e) {
       throw new Error(e as string);
     }
