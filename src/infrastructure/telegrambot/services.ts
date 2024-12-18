@@ -18,7 +18,7 @@ async function getCurtainById(curtainId: string) {
     const curtain = await getCurtainByIdUseCase.execute(curtainId);
     return curtain;
   } catch (error) {
-    throw (error as Error).message;
+    return (error as Error).message;
   }
 }
 function getAll(page = 1, category: CurtainCategory) {
@@ -26,21 +26,29 @@ function getAll(page = 1, category: CurtainCategory) {
     const curtains = getAllCurtains.execute(category, page);
     return curtains;
   } catch (error) {
-    throw (error as Error).message;
+    throw new Error((error as Error).message);
   }
 }
 function generateCurtainMessage(curtain: CurtainDto) {
   const availability = curtain.is_active ? "✅ Available" : "❌ Out of Stock";
   const message = `
 🎨 **Curtain ID**: ${curtain.curtain_id}
+
 🪟 **Curtain Name**: ${curtain.curtain_name}
+
 🛋️ **Category**: ${curtain.curtain_category}
+
 🖼️ **Color**: ${curtain.curtain_color}
-💵 **Price**: $${curtain.curtain_base_price.toFixed(2)}
+
+💵 **Price**: ${curtain.curtain_base_price.toFixed(2)} ETB
+
 📄 **Description**: 
+
 _${curtain.curtain_description}_
 
 🛒 **Availability**: ${availability}
+
+📞 **+25191112131415**
 
 ---
 
@@ -50,4 +58,16 @@ _${curtain.curtain_description}_
   return message;
 }
 
-export { getCurtainById, getAll, generateCurtainMessage };
+function generateErrorMessage(error_message = "Sorry, An Error Occured.") {
+  const message = `
+❗ **Error**: 
+_${error_message}_
+
+If you need assistance, feel free to contact us at: 
+📞 **+25191112131415**
+  `;
+
+  return message;
+}
+
+export { getCurtainById, getAll, generateCurtainMessage, generateErrorMessage };

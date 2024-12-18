@@ -1,17 +1,32 @@
 import { Bot } from "grammy";
 import envConfig from "../../shared/env";
 import { staticRes } from "./staticres";
-import { generateCurtainMessage, getCurtainById } from "./services";
+import {
+  generateCurtainMessage,
+  generateErrorMessage,
+  getCurtainById,
+} from "./services";
 const telegramBot = new Bot(envConfig.TELEGRAM_BOT as string);
 telegramBot.command("start", async (ctx) => {
   const match = ctx.match;
   if (match) {
-    const curtain = await getCurtainById(`${match}`);
-    if (curtain) {
-      return ctx.reply(generateCurtainMessage(curtain), {
-        parse_mode: "Markdown",
-      });
-    }
+    getCurtainById(`${match}`).then((curtain) => {
+      if (typeof curtain !== "string") {
+        return ctx
+          .reply(generateCurtainMessage(curtain), {
+            parse_mode: "Markdown",
+          })
+          .catch((error) => {
+            return ctx.reply(generateErrorMessage(error), {
+              parse_mode: "Markdown",
+            });
+          });
+      } else {
+        return ctx.reply(generateErrorMessage("Curtain not found"), {
+          parse_mode: "Markdown",
+        });
+      }
+    });
   } else {
     ctx.reply(staticRes.start, {
       reply_markup: {
