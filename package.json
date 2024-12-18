@@ -40,9 +40,10 @@
     ]
   },
   "scripts": {
-    "prod":"node dist/index.js",
+    "build": "tsc",
+    "prod": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "prepare": "husky install",
+    "prepare": "husky",
     "lint": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\""
   },
