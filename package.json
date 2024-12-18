@@ -40,6 +40,7 @@
     ]
   },
   "scripts": {
+    "prod":"node dist/index.js",
     "dev": "nodemon src/index.ts",
     "prepare": "husky install",
     "lint": "eslint . --ext .ts,.tsx --fix",
