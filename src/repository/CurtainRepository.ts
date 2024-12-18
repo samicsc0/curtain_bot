@@ -198,7 +198,7 @@ class CurtainRepository implements ICurtainRepository {
     category?: CurtainCategory
   ): Promise<CurtainDto[]> {
     try {
-      const currentpage: number = page || 10;
+      const currentpage: number = page;
       const whereCondition = category
         ? { curtain_category: category, is_deleted: false }
         : { is_deleted: false };
@@ -208,8 +208,8 @@ class CurtainRepository implements ICurtainRepository {
         orderBy: {
           created_at: 'desc', 
         },
-        take: 10, 
-        skip: (currentpage - 1) * 10, // Offset for grouped results
+        take: 3, 
+        skip: (currentpage - 1) * 3, 
       });
 
       const curtainDto: CurtainDto[] = curtain.map((curtain) => ({

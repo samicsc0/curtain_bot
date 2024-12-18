@@ -21,9 +21,9 @@ async function getCurtainById(curtainId: string) {
     return (error as Error).message;
   }
 }
-function getAll(page = 1, category: CurtainCategory) {
+function getAll(page = 1, category: unknown) {
   try {
-    const curtains = getAllCurtains.execute(category, page);
+    const curtains = getAllCurtains.execute(category as CurtainCategory, page);
     return curtains;
   } catch (error) {
     throw new Error((error as Error).message);
