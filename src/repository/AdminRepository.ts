@@ -76,28 +76,24 @@ class AdminRepository implements IAdminRepository {
     admin_id: string,
     email: string
   ): Promise<AdminDTO | null> {
-    try {
-      const admin = await this.prisma.admin.findUnique({
-        where: { admin_id: admin_id },
+    const admin = await this.prisma.admin.findUnique({
+      where: { admin_id: admin_id },
+    });
+    if (admin === null) {
+      const customError = new CustomError("Admin not found", 404);
+      throw customError;
+    } else {
+      const updatedAdmin = await this.prisma.admin.update({
+        where: { admin_id },
+        data: { admin_email: email },
       });
-      if (admin === null) {
-        const customError = new CustomError("Admin not found", 404);
-        throw customError;
-      } else {
-        const updatedAdmin = await this.prisma.admin.update({
-          where: { admin_id },
-          data: { admin_email: email },
-        });
-        const formatedAdmin: AdminDTO = {
-          admin_id: updatedAdmin.admin_id,
-          admin_first_name: updatedAdmin.admin_first_name,
-          admin_last_name: updatedAdmin.admin_last_name,
-          admin_email: updatedAdmin.admin_email,
-        };
-        return formatedAdmin;
-      }
-    } catch (error) {
-      throw error;
+      const formatedAdmin: AdminDTO = {
+        admin_id: updatedAdmin.admin_id,
+        admin_first_name: updatedAdmin.admin_first_name,
+        admin_last_name: updatedAdmin.admin_last_name,
+        admin_email: updatedAdmin.admin_email,
+      };
+      return formatedAdmin;
     }
   }
   /**
@@ -114,32 +110,28 @@ class AdminRepository implements IAdminRepository {
     old_admin_password: string,
     new_admin_password: string
   ): Promise<boolean> {
-    try {
-      const admin = await this.prisma.admin.findUnique({
-        where: { admin_id: admin_id },
-      });
-      if (admin == null) {
-        const customError = new CustomError("Admin not found", 404);
-        throw customError;
+    const admin = await this.prisma.admin.findUnique({
+      where: { admin_id: admin_id },
+    });
+    if (admin == null) {
+      const customError = new CustomError("Admin not found", 404);
+      throw customError;
+    } else {
+      if (
+        await AuthenticationAuthorizationServices.comparePassword(
+          old_admin_password,
+          admin.admin_password
+        )
+      ) {
+        await this.prisma.admin.update({
+          where: { admin_id },
+          data: { admin_password: new_admin_password },
+        });
+        return true;
       } else {
-        if (
-          await AuthenticationAuthorizationServices.comparePassword(
-            old_admin_password,
-            admin.admin_password
-          )
-        ) {
-          await this.prisma.admin.update({
-            where: { admin_id },
-            data: { admin_password: new_admin_password },
-          });
-          return true;
-        } else {
-          const customError = new CustomError("Old password is incorrect", 400);
-          throw customError;
-        }
+        const customError = new CustomError("Old password is incorrect", 400);
+        throw customError;
       }
-    } catch (error) {
-      throw error;
     }
   }
   /**
@@ -180,7 +172,7 @@ class AdminRepository implements IAdminRepository {
   async getAllAdmins(): Promise<AdminDTO[]> {
     try {
       const admins = await this.prisma.admin.findMany();
-      const adminDto: AdminDTO[] = admins.map((admin) => ({
+      const adminDto: AdminDTO[] = admins.map((admin: AdminDTO) => ({
         admin_id: admin.admin_id,
         admin_first_name: admin.admin_first_name,
         admin_last_name: admin.admin_last_name,
