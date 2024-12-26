@@ -24,13 +24,20 @@ class CurtainRepository implements ICurtainRepository {
   async createCurtain(curtain: CreateCurtainDTO): Promise<CurtainDto> {
     try {
       const createdCurtain = await this.prisma.curtain.create({
-        data: curtain,
+        data: {
+          curtain_name: curtain.curtain_name,
+          curtain_category: curtain.curtain_category,
+          curtain_color: { connect: { color_id: curtain.curtain_color } },
+          curtain_image_url: curtain.curtain_image_url,
+          curtain_base_price: curtain.curtain_base_price,
+          curtain_description: curtain.curtain_description,
+        },
       });
       const curtainDto: CurtainDto = {
         curtain_id: createdCurtain.curtain_id,
         curtain_name: createdCurtain.curtain_name,
         curtain_base_price: createdCurtain.curtain_base_price,
-        curtain_color: createdCurtain.curtain_color,
+        curtain_color: createdCurtain.colorColor_id,
         curtain_category: createdCurtain.curtain_category as CurtainCategory,
         curtain_image_url: createdCurtain.curtain_image_url,
         curtain_description: createdCurtain.curtain_description,
@@ -57,7 +64,7 @@ class CurtainRepository implements ICurtainRepository {
         curtain_id: curtain.curtain_id,
         curtain_name: curtain.curtain_name,
         curtain_base_price: curtain.curtain_base_price,
-        curtain_color: curtain.curtain_color,
+        curtain_color: curtain.colorColor_id,
         curtain_category: curtain.curtain_category as CurtainCategory,
         curtain_image_url: curtain.curtain_image_url,
         curtain_description: curtain.curtain_description,
@@ -90,7 +97,7 @@ class CurtainRepository implements ICurtainRepository {
           curtain_name: curtain.curtain_name,
           curtain_base_price: curtain.curtain_base_price,
           curtain_category: curtain.curtain_category,
-          curtain_color: curtain.curtain_color,
+          curtain_color: { connect: { color_id: curtain.curtain_name } },
           curtain_description: curtain.curtain_description,
         },
         where: { curtain_id: curtain_id },
@@ -99,7 +106,7 @@ class CurtainRepository implements ICurtainRepository {
         curtain_id: updatedCurtain.curtain_id,
         curtain_name: updatedCurtain.curtain_name,
         curtain_base_price: updatedCurtain.curtain_base_price,
-        curtain_color: updatedCurtain.curtain_color,
+        curtain_color: updatedCurtain.colorColor_id,
         curtain_category: updatedCurtain.curtain_category as CurtainCategory,
         curtain_image_url: updatedCurtain.curtain_image_url,
         curtain_description: updatedCurtain.curtain_description,
@@ -135,7 +142,7 @@ class CurtainRepository implements ICurtainRepository {
         curtain_id: updatedCurtain.curtain_id,
         curtain_name: updatedCurtain.curtain_name,
         curtain_base_price: updatedCurtain.curtain_base_price,
-        curtain_color: updatedCurtain.curtain_color,
+        curtain_color: updatedCurtain.colorColor_id,
         curtain_category: updatedCurtain.curtain_category as CurtainCategory,
         curtain_image_url: updatedCurtain.curtain_image_url,
         curtain_description: updatedCurtain.curtain_description,
@@ -192,7 +199,7 @@ class CurtainRepository implements ICurtainRepository {
           "curtain_id",
           "curtain_name",
           "curtain_base_price",
-          "curtain_color",
+          "colorColor_id",
           "curtain_category",
           "curtain_image_url",
           "curtain_description",
@@ -206,27 +213,16 @@ class CurtainRepository implements ICurtainRepository {
         skip: (currentpage - 1) * 3,
       });
 
-      const curtainDto = curtain.map(
-        (curtain: {
-          curtain_id: string;
-          curtain_name: string;
-          curtain_base_price: number;
-          curtain_color: string;
-          curtain_category: string;
-          curtain_image_url: string;
-          curtain_description: string;
-          is_active: boolean;
-        }) => ({
-          curtain_id: curtain.curtain_id,
-          curtain_name: curtain.curtain_name,
-          curtain_base_price: curtain.curtain_base_price,
-          curtain_color: curtain.curtain_color,
-          curtain_category: curtain.curtain_category as CurtainCategory,
-          curtain_image_url: curtain.curtain_image_url,
-          curtain_description: curtain.curtain_description,
-          is_active: curtain.is_active,
-        })
-      );
+      const curtainDto = curtain.map((curtain) => ({
+        curtain_id: curtain.curtain_id,
+        curtain_name: curtain.curtain_name,
+        curtain_base_price: curtain.curtain_base_price,
+        curtain_color: curtain.colorColor_id,
+        curtain_category: curtain.curtain_category as CurtainCategory,
+        curtain_image_url: curtain.curtain_image_url,
+        curtain_description: curtain.curtain_description,
+        is_active: curtain.is_active,
+      }));
       return curtainDto;
     } catch (e) {
       throw new Error(e as string);
@@ -256,7 +252,7 @@ class CurtainRepository implements ICurtainRepository {
         curtain_id: updatedCurtain.curtain_id,
         curtain_name: updatedCurtain.curtain_name,
         curtain_base_price: updatedCurtain.curtain_base_price,
-        curtain_color: updatedCurtain.curtain_color,
+        curtain_color: updatedCurtain.colorColor_id,
         curtain_category: updatedCurtain.curtain_category as CurtainCategory,
         curtain_image_url: updatedCurtain.curtain_image_url,
         curtain_description: updatedCurtain.curtain_description,
