@@ -1,3 +1,4 @@
 import adminRouter from "./adminRoutes";
 import curtainRouter from "./curtainRoutes";
-export { adminRouter, curtainRouter };
+import colorRoutes from "./colorRoutes";
+export { adminRouter, curtainRouter, colorRoutes };
