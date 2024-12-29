@@ -2,14 +2,19 @@ generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 model Admin {
   admin_id         String  @id @unique @default(cuid())
   admin_first_name String
   admin_last_name  String
   admin_email      String  @unique
   admin_password   String
-  is_deleted       Boolean @default(false)
   is_active        Boolean @default(true)
+  is_deleted       Boolean @default(false)
 }
 
 model Curtain {
@@ -17,20 +22,23 @@ model Curtain {
   curtain_name        String
   curtain_image_url   String
   curtain_base_price  Float
-  curtain_color       String
-  curtain_description String
   curtain_category    CurtainCategory @default(Flat)
-  is_deleted          Boolean         @default(false)
   is_active           Boolean         @default(true)
+  is_deleted          Boolean         @default(false)
+  curtain_description String
   created_at          DateTime        @default(now())
+  colorColor_id       String
+  curtain_color       Color           @relation(fields: [colorColor_id], references: [color_id])
+}
+
+model Color {
+  color_id     String    @id @unique @default(cuid())
+  color_name   String
+  is_deleted Boolean   @default(false)
+  Curtain      Curtain[]
 }
 
 enum CurtainCategory {
   Flat
   Patterned
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
 }

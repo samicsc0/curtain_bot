@@ -1,4 +1,4 @@
 import { startServer } from "./infrastructure/express";
-import { telegramBot } from "./infrastructure/telegrambot";
+// import { telegramBot } from "./infrastructure/telegrambot";
 startServer();
-telegramBot.start()
+// telegramBot.start()

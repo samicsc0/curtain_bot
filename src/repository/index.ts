@@ -1,3 +1,4 @@
 import AdminRepository from "./AdminRepository";
 import CurtainRepository from "./CurtainRepository";
-export { AdminRepository, CurtainRepository };
+import ColorRepository from "./ColorRepository";
+export { AdminRepository, CurtainRepository, ColorRepository };
