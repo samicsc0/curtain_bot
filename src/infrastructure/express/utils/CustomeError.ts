@@ -1,5 +1,5 @@
 class CustomError extends Error {
-  errorStatusCode: number = 0;
+  errorStatusCode: number = 500;
   status: "Fail" | "Error" | "" = "";
   isOperational: boolean = true;
   constructor(message: string, errorStatusCode: number = 500) {
