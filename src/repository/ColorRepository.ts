@@ -103,7 +103,7 @@ class ColorRepository implements IColorRepository {
           where: { color_id: color_id },
         });
       } else {
-        const customError = new CustomError("Old password is incorrect", 400);
+        const customError = new CustomError("Color not found.", 400);
         throw customError;
       }
     } catch (error) {
