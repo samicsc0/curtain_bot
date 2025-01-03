@@ -8,10 +8,10 @@ export default class GetAllCurtainsUseCase {
    *
    * @param {CurtainCategory} category
    * @param {number} page
-   * @return {*} 
+   * @return {*}
    * @memberof GetAllCurtainsUseCase
    */
-  execute(category: CurtainCategory, page: number) {
-    return this._curtainRepository.getAllCurtains( page, category);
+  execute(category: CurtainCategory, page: number, color: string) {
+    return this._curtainRepository.getAllCurtains(page, category, color);
   }
 }

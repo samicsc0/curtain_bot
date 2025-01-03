@@ -50,20 +50,21 @@ const createCurtain = AsyncErrorHandler(async (req: Request, res: Response) => {
 const deleteCurtain = AsyncErrorHandler(async (req: Request, res: Response) => {
   const id = req.params.id;
   await deleteCurtainUseCase.execute(id);
-  const response:ApiResponseDTO<string> = {
+  const response: ApiResponseDTO<string> = {
     status: "Success",
-    message:" Curtain deleted successfully",
-    statusCode:204,
-    data:"",
-  }
+    message: " Curtain deleted successfully",
+    statusCode: 204,
+    data: "",
+  };
   res.status(200).json(response);
 });
 const getAllCurtains = AsyncErrorHandler(
   async (req: Request, res: Response) => {
-    const { page, category } = req.query;
+    const { page, category, color } = req.query;
     const result = await getAllCurtainsUseCase.execute(
       category as CurtainCategory,
-      page ? parseInt(page as string) : 1
+      page ? parseInt(page as string) : 1,
+      color as string
     );
     const response: ApiResponseDTO<CurtainDto[]> = {
       status: "Success",

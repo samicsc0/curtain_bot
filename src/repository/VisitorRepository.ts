@@ -6,44 +6,62 @@ class VisitorRepository implements IVisitorRepository {
   constructor(private readonly prismaClient: PrismaClient) {}
 
   async createVisit(telegramId: string): Promise<VisitorDTO> {
-    const createdVisitor = await this.prismaClient.visitor.create({
-      data: { telegram_id: telegramId },
-    });
-    const visitor: VisitorDTO = {
-      visitorId: createdVisitor.visitor_id,
-      visitorTelegramId: createdVisitor.telegram_id,
-      visitedAt: createdVisitor.created_at.toISOString(),
-    };
-    return visitor;
+    try {
+      const createdVisitor = await this.prismaClient.visitor.create({
+        data: { telegram_id: telegramId },
+      });
+      const visitor: VisitorDTO = {
+        visitorId: createdVisitor.visitor_id,
+        visitorTelegramId: createdVisitor.telegram_id,
+        visitedAt: createdVisitor.created_at.toISOString(),
+      };
+      return visitor;
+    } catch (e) {
+      throw new Error(e as string);
+    }
   }
 
   async getTotalUniqueVisitors(): Promise<number> {
-    const result = await this.prismaClient.$queryRaw<{ count: bigint }[]>`
+    try {
+      const result = await this.prismaClient.$queryRaw<{ count: bigint }[]>`
       SELECT COUNT(DISTINCT "telegram_id") AS count
       FROM "Visitor";
     `;
 
-    return result[0]?.count ? Number(result[0].count) : 0;
+      return result[0]?.count ? Number(result[0].count) : 0;
+    } catch (e) {
+      throw new Error(e as string);
+    }
   }
 
   async getTotalVisits(): Promise<number> {
-    const count = await this.prismaClient.visitor.count();
-    return count;
+    try {
+      const count = await this.prismaClient.visitor.count();
+      return count;
+    } catch (e) {
+      throw new Error(e as string);
+    }
   }
 
   async getDailyUniqueVisitors(): Promise<number> {
-    const date = new Date();
-    const startDate = new Date(date.setHours(0, 0, 0, 0));
-    const endDate = new Date(date.getTime() + 86400000);
+    try {
+      const date = new Date();
+      const startDate = new Date(date.setHours(0, 0, 0, 0));
+      const endDate = new Date(date.getTime() + 86400000);
 
-    const result = await this.prismaClient.$queryRaw<Array<{ count: bigint }>>`
+      const result = await this.prismaClient.$queryRaw<
+        Array<{ count: bigint }>
+      >`
     SELECT COUNT(DISTINCT "telegram_id") AS count
     FROM "Visitor"
     WHERE "created_at" >= ${startDate}
       AND "created_at" < ${endDate};
   `;
 
-    return result[0]?.count ? Number(result[0].count) : 0;
+      return result[0]?.count ? Number(result[0].count) : 0;
+    } catch (e) {
+      throw new Error(e as string);
+    }
   }
 }
 export { VisitorRepository };

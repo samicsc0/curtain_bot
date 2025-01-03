@@ -202,13 +202,14 @@ class CurtainRepository implements ICurtainRepository {
    */
   async getAllCurtains(
     page: number = 1,
-    category?: CurtainCategory
+    category?: CurtainCategory,
+    color?: string
   ): Promise<CurtainDto[]> {
     try {
       const currentpage: number = page;
-      const whereCondition = category
-        ? { curtain_category: category, is_deleted: false }
-        : { is_deleted: false };
+      const categoryFilter = category ? { curtain_category: category } : {};
+      const colorFilter = color ? { colorColor_id: color } : {};
+      const whereCondition = { ...categoryFilter, ...colorFilter };
       const curtains = await this.prisma.curtain.findMany({
         where: whereCondition,
         orderBy: {

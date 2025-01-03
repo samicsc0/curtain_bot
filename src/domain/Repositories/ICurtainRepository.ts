@@ -20,7 +20,8 @@ interface ICurtainRepository {
   ): Promise<CurtainDto>;
   getAllCurtains(
     page: number,
-    category?: CurtainCategory
+    category?: CurtainCategory,
+    color?: string
   ): Promise<CurtainDto[]>;
 }
 
