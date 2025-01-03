@@ -105,7 +105,7 @@ class CurtainRepository implements ICurtainRepository {
           curtain_name: curtain.curtain_name,
           curtain_base_price: curtain.curtain_base_price,
           curtain_category: curtain.curtain_category,
-          curtain_color: { connect: { color_id: curtain.curtain_name } },
+          curtain_color: { connect: { color_id: curtain.curtain_color } },
           curtain_description: curtain.curtain_description,
         },
         where: { curtain_id: curtain_id },
