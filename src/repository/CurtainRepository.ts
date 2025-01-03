@@ -32,12 +32,16 @@ class CurtainRepository implements ICurtainRepository {
           curtain_base_price: curtain.curtain_base_price,
           curtain_description: curtain.curtain_description,
         },
+        include: { curtain_color: true },
       });
       const curtainDto: CurtainDto = {
         curtain_id: createdCurtain.curtain_id,
         curtain_name: createdCurtain.curtain_name,
         curtain_base_price: createdCurtain.curtain_base_price,
-        curtain_color: createdCurtain.colorColor_id,
+        curtain_color: {
+          color_id: createdCurtain.curtain_color.color_id,
+          color_name: createdCurtain.curtain_color.color_name,
+        },
         curtain_category: createdCurtain.curtain_category as CurtainCategory,
         curtain_image_url: createdCurtain.curtain_image_url,
         curtain_description: createdCurtain.curtain_description,
@@ -58,13 +62,17 @@ class CurtainRepository implements ICurtainRepository {
   async getCurtainById(curtain_id: string): Promise<CurtainDto> {
     const curtain = await this.prisma.curtain.findUnique({
       where: { curtain_id: curtain_id, is_deleted: false },
+      include: { curtain_color: true },
     });
     if (curtain) {
       const curtainDto: CurtainDto = {
         curtain_id: curtain.curtain_id,
         curtain_name: curtain.curtain_name,
         curtain_base_price: curtain.curtain_base_price,
-        curtain_color: curtain.colorColor_id,
+        curtain_color: {
+          color_id: curtain.curtain_color.color_id,
+          color_name: curtain.curtain_color.color_name,
+        },
         curtain_category: curtain.curtain_category as CurtainCategory,
         curtain_image_url: curtain.curtain_image_url,
         curtain_description: curtain.curtain_description,
@@ -101,12 +109,16 @@ class CurtainRepository implements ICurtainRepository {
           curtain_description: curtain.curtain_description,
         },
         where: { curtain_id: curtain_id },
+        include: { curtain_color: true },
       });
       const curtainDto: CurtainDto = {
         curtain_id: updatedCurtain.curtain_id,
         curtain_name: updatedCurtain.curtain_name,
         curtain_base_price: updatedCurtain.curtain_base_price,
-        curtain_color: updatedCurtain.colorColor_id,
+        curtain_color: {
+          color_id: updatedCurtain.curtain_color.color_id,
+          color_name: updatedCurtain.curtain_color.color_name,
+        },
         curtain_category: updatedCurtain.curtain_category as CurtainCategory,
         curtain_image_url: updatedCurtain.curtain_image_url,
         curtain_description: updatedCurtain.curtain_description,
@@ -137,12 +149,16 @@ class CurtainRepository implements ICurtainRepository {
       const updatedCurtain = await this.prisma.curtain.update({
         data: { is_active: is_active },
         where: { curtain_id: curtain_id },
+        include: { curtain_color: true },
       });
       const curtainDto: CurtainDto = {
         curtain_id: updatedCurtain.curtain_id,
         curtain_name: updatedCurtain.curtain_name,
         curtain_base_price: updatedCurtain.curtain_base_price,
-        curtain_color: updatedCurtain.colorColor_id,
+        curtain_color: {
+          color_id: updatedCurtain.curtain_color.color_id,
+          color_name: updatedCurtain.curtain_color.color_name,
+        },
         curtain_category: updatedCurtain.curtain_category as CurtainCategory,
         curtain_image_url: updatedCurtain.curtain_image_url,
         curtain_description: updatedCurtain.curtain_description,
@@ -193,31 +209,25 @@ class CurtainRepository implements ICurtainRepository {
       const whereCondition = category
         ? { curtain_category: category, is_deleted: false }
         : { is_deleted: false };
-      const curtain = await this.prisma.curtain.groupBy({
-        by: [
-          "created_at",
-          "curtain_id",
-          "curtain_name",
-          "curtain_base_price",
-          "colorColor_id",
-          "curtain_category",
-          "curtain_image_url",
-          "curtain_description",
-          "is_active",
-        ],
+      const curtains = await this.prisma.curtain.findMany({
         where: whereCondition,
         orderBy: {
           created_at: "desc",
         },
         take: 3,
         skip: (currentpage - 1) * 3,
+        include: {
+          curtain_color: true,
+        },
       });
-
-      const curtainDto = curtain.map((curtain) => ({
+      const curtainDto = curtains.map((curtain) => ({
         curtain_id: curtain.curtain_id,
         curtain_name: curtain.curtain_name,
         curtain_base_price: curtain.curtain_base_price,
-        curtain_color: curtain.colorColor_id,
+        curtain_color: {
+          color_id: curtain.curtain_color.color_id,
+          color_name: curtain.curtain_color.color_name,
+        },
         curtain_category: curtain.curtain_category as CurtainCategory,
         curtain_image_url: curtain.curtain_image_url,
         curtain_description: curtain.curtain_description,
@@ -247,12 +257,17 @@ class CurtainRepository implements ICurtainRepository {
       const updatedCurtain = await this.prisma.curtain.update({
         data: { curtain_image_url: curtain_image_url },
         where: { curtain_id: curtain_id },
+        include: { curtain_color: true },
       });
       const curtainDto: CurtainDto = {
         curtain_id: updatedCurtain.curtain_id,
         curtain_name: updatedCurtain.curtain_name,
         curtain_base_price: updatedCurtain.curtain_base_price,
-        curtain_color: updatedCurtain.colorColor_id,
+
+        curtain_color: {
+          color_id: updatedCurtain.curtain_color.color_id,
+          color_name: updatedCurtain.curtain_color.color_name,
+        },
         curtain_category: updatedCurtain.curtain_category as CurtainCategory,
         curtain_image_url: updatedCurtain.curtain_image_url,
         curtain_description: updatedCurtain.curtain_description,

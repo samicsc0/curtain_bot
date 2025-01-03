@@ -1,4 +1,5 @@
 import { Admin } from "./Admin";
 import { Curtain } from "./Curtain";
 import { Color } from "./Color";
-export { Admin, Curtain, Color };
+import { Visitor } from "./Visitor";
+export { Admin, Curtain, Color, Visitor };

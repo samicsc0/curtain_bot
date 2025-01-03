@@ -39,7 +39,7 @@ const updateCurtainImageUseCase = new UpdateCurtainImageUseCase(
 const createCurtain = AsyncErrorHandler(async (req: Request, res: Response) => {
   const curtainData: CreateCurtainDTO = req.body;
   const result = await createCurtainUsecase.execute(curtainData);
-  const response: ApiResponseDTO<CreateCurtainDTO> = {
+  const response: ApiResponseDTO<CurtainDto> = {
     status: "Success",
     message: "Curtain created successfully",
     statusCode: 201,
