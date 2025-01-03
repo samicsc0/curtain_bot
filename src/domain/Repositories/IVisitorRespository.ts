@@ -1,6 +1,9 @@
+import { VisitorDTO } from "../DTOs";
+
 interface IVisitorRepository {
-  getTotalUniqueVisitors(): number;
-  getDailyUniqueVisitors(): number;
-  getTotalVisits(): number;
+  createVisit(telegramId: string): Promise<VisitorDTO>;
+  getTotalUniqueVisitors(): Promise<number>;
+  getDailyUniqueVisitors(): Promise<number>;
+  getTotalVisits(): Promise<number>;
 }
 export { IVisitorRepository };
