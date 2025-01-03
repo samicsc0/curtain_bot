@@ -11,6 +11,7 @@ import {
   UpdateCurtainStatusValidator,
   UpdateCurtainImageValidator,
 } from "./CurtainValidators";
+import { CreateVisitorValidation } from "./VisitiorValidators";
 
 export {
   LoginAdminValidator,
@@ -21,4 +22,5 @@ export {
   UpdateCurtainValidator,
   UpdateCurtainStatusValidator,
   UpdateCurtainImageValidator,
+  CreateVisitorValidation,
 };
